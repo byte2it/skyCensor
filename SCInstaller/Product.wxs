@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+  xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="skyCensor" Language="1033" Version="0.0.9.111" Manufacturer="Denys Ponomarenko" UpgradeCode="ce96b089-1534-4416-874a-9a364dcdea2c" >
+    
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" AdminImage="yes"  />
+
+    <Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <!--<MediaTemplate />-->
+
+    <Feature Id="ProductFeature" Title="skyCensor installer" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+
+    <Icon Id="skyMonViewer.exe" SourceFile="../skyMonViewer/res/skyMonViewer.ico" />
+    <Binary Id="myAction"
+     SourceFile="../$(var.Build)/installer_helper.dll" />
+
+    <Binary Id="installService64"
+     SourceFile="../$(var.Build)/slogService.exe" />
+
+    <CustomAction Id="WriteUserDbPath" BinaryKey="myAction" DllEntry="WriteUserDbPath" Execute="deferred" Return="check"  />
+    <CustomAction Id="RemoveUserDbPath" BinaryKey="myAction" DllEntry="RemoveUserDbPath" Execute="deferred" Return="check"  />
+
+    <CustomAction Id="InstallService64" BinaryKey="installService64" ExeCommand="-install" Execute="deferred" Return="check"  />
+
+    <CustomAction Id="UninstallService64" BinaryKey="installService64" ExeCommand="-remove" Execute="deferred" Return="check"  />
+
+    <InstallExecuteSequence>
+      <Custom Action="WriteUserDbPath" Before="InstallFinalize">NOT Installed</Custom>
+      <!--<Custom Action="InstallService64" Before="InstallFinalize">NOT Installed</Custom>-->
+      
+      <Custom Action="RemoveUserDbPath" Before="InstallFinalize">Installed</Custom>
+      <!--<Custom Action="UninstallService64" Before="InstallFinalize">Installed</Custom>-->
+    </InstallExecuteSequence>
+
+
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="skyCensor" />
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <DirectoryRef Id="TARGETDIR">
+      <Merge Id="VCRedist" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC110_CRT_x86.msm" DiskId="1" Language="0"/>
+      <Merge Id="MFCRedist" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC110_MFC_x86.msm" DiskId ="1" Language="0"/>
+    </DirectoryRef>
+    
+    <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist"/>
+    </Feature>
+
+    <Feature Id="MFCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="MFCRedist"/>
+    </Feature>
+  </Fragment>
+
+
+
+
+
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+      <Component Id="ExecutableComponent" Guid="{64761E9A-A97D-4D43-8844-334A67D2F7D4}">
+        
+        <File Id='skyMonViewer.exe' Name='skyMonViewer.exe' Source='../$(var.Build)/skyMonViewer.exe' KeyPath='yes'></File>
+        <Shortcut Id="skyCensor" Directory="DesktopFolder" Name="skyCensor 0.0.9.111"
+       WorkingDirectory='INSTALLDIR' Icon="skyMonViewer.exe" IconIndex="0" Advertise="yes" />
+
+        <File Id='SLOG.EXE' Name='slog.exe' Source='../$(var.Build)/slog.exe' KeyPath='no'></File>
+
+        <File Id ='DBCON.DLL' Name='dbcon.dll' Source='../$(var.Build)/dbcon.dll' KeyPath='no'></File>
+
+        <File Id='sqlite3.dll' Name='sqlite3.dll' Source='C:\tools\sqlite\sqlite3.dll' KeyPath='no' ></File>
+
+        <File Id='installer_helper.dll' Name='installer_helper.dll' Source='../$(var.Build)/installer_helper.dll' KeyPath='no'></File>
+
+        <!--<File Id='SLOGSERVICE.EXE' Name='slogService.exe' Source='../$(var.Build)/slogService.exe' Vital='yes' KeyPath='no'></File>-->
+
+
+
+        <!-- TODO: Insert files, registry keys, and other resources here. -->
+
+      </Component>
+      
+
+      <Component Id='ServiceComponent' Guid='{40C082A0-2153-4190-B909-6E11B56B3467}' DiskId='1'>
+
+        <File Id='SLOGSERVICE.EXE' Name='slogService.exe' Source='../$(var.Build)/slogService.exe' Vital='yes' KeyPath='yes'></File>
+
+
+        <ServiceInstall Id='slogServiceInstall'
+                        Name='slogService'
+                        Description='skyCensor service application'
+                        ErrorControl='ignore'
+                        Start='auto'
+                        Type='ownProcess'
+                        Vital='yes'
+                        Account="LocalSystem"
+                        Interactive="no" 
+                         >
+        </ServiceInstall>
+
+        <ServiceControl Id='slogServiceUnInstall'
+                        Name='slogService'
+                        Remove='uninstall'
+                        Wait='yes' />
+
+        <ServiceControl Id='slogServiceStart'
+                        Name='slogService'
+                        Start='install'
+                        Stop="both"
+                        Remove="uninstall"
+                        Wait="yes"/>
+      </Component>
+
+
+    </ComponentGroup>
+  </Fragment>
+
+</Wix>
