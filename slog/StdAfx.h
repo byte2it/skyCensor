@@ -27,7 +27,7 @@
 //  {{AFX_INSERT_LOCATION}}
 #pragma warning(disable : 4786)
 
-#import "C:\tools\Skype4COM-1.0.38.0\Skype4COM.dll"
+#import "C:\tools\Skype4COM\Skype4COM.dll"
 using namespace SKYPE4COMLib;
 
 #include "TEventHandler.h"

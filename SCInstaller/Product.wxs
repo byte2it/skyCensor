@@ -48,15 +48,15 @@
     </Directory>
 
     <DirectoryRef Id="TARGETDIR">
-      <Merge Id="VCRedist" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC110_CRT_x86.msm" DiskId="1" Language="0"/>
-      <Merge Id="MFCRedist" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC110_MFC_x86.msm" DiskId ="1" Language="0"/>
+      <Merge Id="VCRedist" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC140_CRT_x86.msm" DiskId="1" Language="0"/>
+      <Merge Id="MFCRedist" SourceFile="C:\Program Files (x86)\Common Files\Merge Modules\Microsoft_VC140_MFC_x86.msm" DiskId ="1" Language="0"/>
     </DirectoryRef>
     
-    <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+    <Feature Id="VCRedist" Title="Visual C++ 15.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
       <MergeRef Id="VCRedist"/>
     </Feature>
 
-    <Feature Id="MFCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+    <Feature Id="MFCRedist" Title="Visual C++ 15.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
       <MergeRef Id="MFCRedist"/>
     </Feature>
   </Fragment>

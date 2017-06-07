@@ -41,7 +41,7 @@
 #include <vector>
 #include <afxdlgs.h>
 
-#import "C:\tools\Skype4COM-1.0.38.0\Skype4COM.dll"
+#import "C:\tools\Skype4COM\Skype4COM.dll"
 using namespace SKYPE4COMLib;
 
 #ifdef _UNICODE
